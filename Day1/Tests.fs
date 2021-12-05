@@ -23,3 +23,8 @@ let ``single item list`` () =
 let ``2 item list same`` () =
     let count = countIncreases([1,1])
     Assert.Equal(0, count)
+
+[<Fact>]
+let ``2 item list decreasing`` () =
+    let count = countIncreases([2,1])
+    Assert.Equal(0, count)

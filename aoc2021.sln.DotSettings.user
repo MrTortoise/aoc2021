@@ -3,5 +3,6 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::246F87E4-F0EA-46B8-82D0-1BD685C2D701::net6.0::Tests.single item list&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::246F87E4-F0EA-46B8-82D0-1BD685C2D701::net6.0::Tests.2 item list same&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::246F87E4-F0EA-46B8-82D0-1BD685C2D701::net6.0::Tests.2 item list decreasing&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
