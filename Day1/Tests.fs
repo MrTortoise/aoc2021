@@ -46,3 +46,10 @@ let ``3 item list not increasing`` () =
 let ``3 item list increasing`` () =
     let count = countIncreases ([ 1; 2; 3 ])
     Assert.Equal(2, count)
+
+[<Fact>]
+let ``example  list`` () =
+    let data = [199;200;208;210;200;207;240;269;260;263]
+    let count = countIncreases data
+    Assert.Equal(7, count)
+
