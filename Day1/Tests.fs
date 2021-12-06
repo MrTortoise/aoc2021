@@ -8,9 +8,9 @@ let rec countIncreases list =
 
     match list with
     | [] -> 0
-    | [ a ] -> 0
+    | [ _ ] -> 0
     | [ a; b ] -> increasing (a, b)
-    | l :: r :: tail -> increasing(l,r) + countIncreases(r::tail)
+    | l :: r :: tail -> increasing (l, r) + countIncreases (r :: tail)
 
 [<Fact>]
 let ``empty list`` () =
@@ -50,7 +50,18 @@ let ``3 item list increasing`` () =
 
 [<Fact>]
 let ``example  list`` () =
-    let data = [199;200;208;210;200;207;240;269;260;263]
+    let data =
+        [ 199
+          200
+          208
+          210
+          200
+          207
+          240
+          269
+          260
+          263 ]
+
     let count = countIncreases data
     Assert.Equal(7, count)
 
@@ -59,7 +70,8 @@ let ``example  list`` () =
 let ``the days data adds up to the right amount`` () =
     let data =
         File.ReadLines("Day1Data.txt")
-        |> Seq.map(int)
+        |> Seq.map (int)
         |> Seq.toList
+
     let count = countIncreases data
-    Assert.Equal(1527,count)
+    Assert.Equal(1527, count)
