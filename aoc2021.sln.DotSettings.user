@@ -9,5 +9,9 @@
     &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Day2.CalculateAimedPositionScalar.Forward 5 should result in 5&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Day2.CalculateAimedPositionScalar.Forward 5 down 5 should result in 5&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Day2.CalculateAimedPositionScalar&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::BFC3A44C-CFEC-4F16-A6D5-CEAE1291C1F4::net6.0::Tests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::BFC3A44C-CFEC-4F16-A6D5-CEAE1291C1F4::net6.0::Day3.CalculatePowerConsumption.00100 to decimal&lt;/TestId&gt;&#xD;
+    &lt;TestId xml:space="preserve"&gt;xUnit::BFC3A44C-CFEC-4F16-A6D5-CEAE1291C1F4::net6.0::Day3.CalculatePowerConsumption.00100 to epsilon &lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::BFC3A44C-CFEC-4F16-A6D5-CEAE1291C1F4::net6.0::Day3.CalculatePowerConsumption&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
