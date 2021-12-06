@@ -33,5 +33,4 @@ let ``increases of the given data should be ...`` () =
     |> Seq.map (int)
     |> Seq.toList
     |> increases
-    |> should equal  1575
-    
+    |> should equal 1575
