@@ -8,7 +8,8 @@ let gamma line = Convert.ToInt32(line, 2)
 
 let epsilon (line: string) =
     let ep =
-        Seq.toList line
+        line.Trim()
+        |> Seq.toList
         |> Seq.map (fun i -> if i = '0' then '1' else '0')
         |> Seq.toArray
         |> String
@@ -17,41 +18,39 @@ let epsilon (line: string) =
 
 let calculatePower line = gamma line * epsilon line
 
-type Signals =
-    { i: int
-      j: int
-      k: int
-      l: int
-      m: int
-      midpoint: int}
 
-let addSignalToExisting(state: Signals) (item: string) =
-    let i = if item.[0] = '1' then 1 else 0
-    let j = if item.[1] = '1' then 1 else 0
-    let k = if item.[2] = '1' then 1 else 0
-    let l = if item.[3] = '1' then 1 else 0
-    let m = if item.[4] = '1' then 1 else 0
-
-    { state with
-          i = state.i + i
-          j = state.j + j
-          k = state.k + k
-          l = state.l + l
-          m = state.m + m }
+let addSignalToExisting(state: int[]) (item: string) =
+    let value c = if c = '1' then 1 else 0
     
-let buildBinaryString (signals: Signals) =
-    let value total = if (total > signals.midpoint) then "1" else "0"
+    item
+    |> Seq.toArray    
+    |> Array.mapi (fun i c -> Array.set state i (state.[i] + value c))
+    |> ignore
     
-    value signals.i + value signals.j + value signals.k + value signals.l + value signals.m
+    state
     
+let buildBinaryString(midpoint: int) (signals: int[]) =
+    let value total = if (total > midpoint) then "1" else "0"
+    
+    let items =
+        signals
+        |> Array.map value
+    
+    String.concat "" items
 
 let findModalInput (input: string) =
-    let lines = input.Trim().Split("\n")
+    let lines =
+        input.Trim().Split("\n")
+        |> Array.map (fun i -> i.Trim())
     let length = lines.Length
+    let width = lines.[0].Length
+    let midpoint = length / 2
+    let buildBinaryMidpoint = buildBinaryString(midpoint)
+    let emptyArray = Array.zeroCreate(width)
 
     lines
-    |> Array.fold addSignalToExisting { i = 0; j = 0; k = 0; l = 0; m = 0; midpoint = length/2 }
-    |> buildBinaryString
+    |> Array.fold addSignalToExisting emptyArray
+    |> buildBinaryMidpoint
 
 [<Fact>]
 let ``00100 to decimal`` () = "00100" |> gamma |> should equal 4
