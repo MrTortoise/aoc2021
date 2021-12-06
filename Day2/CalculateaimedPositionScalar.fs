@@ -61,3 +61,16 @@ forward 5
 """
 
     calculatePositionScalar input |> should equal 250
+
+[<Fact>]
+let ``Example  should result in 900`` () =
+    let input =
+        """forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2
+"""
+
+    calculatePositionScalar input |> should equal 900
