@@ -13,11 +13,9 @@ let rec slidingWindowCollect (list: list<int>) : list<list<int>> =
     | _ -> failwith "list needs >= 3 items"
 
 let averageSlidingWindow list =
-    list
-    |> slidingWindowCollect
-    |> List.map List.sum
-    
-    
+    list |> slidingWindowCollect |> List.map List.sum
+
+
 [<Fact>]
 let ``sliding window of 1 item is exception`` () =
     Assert.Throws<Exception>(fun () -> slidingWindowCollect [ 1 ] |> ignore)
@@ -64,7 +62,27 @@ let ``sliding window of [199;200;208;210;200;207;240;269;260;263] item is [[199;
           [ 269; 260; 263 ] ]
 
 [<Fact>]
-let ``total sliding window of [1,2,3,4] item is [6;9]`` () =    
-    let data = averageSlidingWindow [1;2;3;4]    
-    data |> should equal [ 6; 9]
+let ``total sliding window of [199;200;208;210;200;207;240;269;260;263] item is 8 items`` () =
+    let data =
+        averageSlidingWindow [ 199
+                               200
+                               208
+                               210
+                               200
+                               207
+                               240
+                               269
+                               260
+                               263 ]
 
+    data
+    |> should
+        equal
+        [ 607
+          618
+          618
+          617
+          647
+          716
+          769
+          792 ]

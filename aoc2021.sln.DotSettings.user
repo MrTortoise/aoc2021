@@ -3,5 +3,6 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::246F87E4-F0EA-46B8-82D0-1BD685C2D701::net6.0::Day1.SlidingWindow&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::246F87E4-F0EA-46B8-82D0-1BD685C2D701::net6.0::Day1.IncreasesOfTotalSlidingWindow.increases of sum of sliding window of [199;200;208;210;200;207;240;269;260;263] item is 5&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::246F87E4-F0EA-46B8-82D0-1BD685C2D701::net6.0::Day1.IncreasesOfTotalSlidingWindow.increases of the given data should be ...&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
