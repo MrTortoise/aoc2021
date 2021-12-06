@@ -1,6 +1,7 @@
 module Day3.CalculatePowerConsumption
 
 open System
+open System.IO
 open Xunit
 open FsUnit.Xunit
 
@@ -51,6 +52,11 @@ let findModalInput (input: string) =
     lines
     |> Array.fold addSignalToExisting emptyArray
     |> buildBinaryMidpoint
+ 
+let powerFromInput (input: string) =
+    input
+    |> findModalInput
+    |> calculatePower
 
 [<Fact>]
 let ``00100 to decimal`` () = "00100" |> gamma |> should equal 4
@@ -80,7 +86,11 @@ let ``get power for example`` () =
 01010
 """
 
-    input
-    |> findModalInput
-    |> calculatePower
+    powerFromInput input
     |> should equal 198
+
+[<Fact>]
+let ``increases of the given data should be ...`` () =
+    File.ReadAllText("Day3Data.txt")
+    |> powerFromInput
+    |> should equal 1092896
