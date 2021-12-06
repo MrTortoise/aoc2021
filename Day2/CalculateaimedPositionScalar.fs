@@ -12,18 +12,18 @@ type Position =
 let processCommand (state: Position) (input: string) =
     let items = input.Split(" ")
 
-    let quant = int (items.[1])
+    let quantity = int (items.[1])
     match items.[0] with
     | "forward" ->
         { state with
-              Horizontal = state.Horizontal + quant
-              Depth = state.Depth + quant * state.Aim }
+              Horizontal = state.Horizontal + quantity
+              Depth = state.Depth + quantity * state.Aim }
     | "down" ->
         { state with
-              Aim = state.Aim + quant }
+              Aim = state.Aim + quantity }
     | "up" ->
         { state with
-              Aim = state.Aim - quant }
+              Aim = state.Aim - quantity }
     | _ -> failwith ("invalid command: " + input)
 
 let calculateScalar (position: Position) =
