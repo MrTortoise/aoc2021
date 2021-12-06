@@ -1,4 +1,4 @@
-module Tests
+module Day1.CountIncreases
 
 open System.IO
 open Xunit
