@@ -6,8 +6,6 @@ open FsUnit.Xunit
 open Day1.SlidingWindow
 open Day1.CountIncreases
 
-
-
 let increases list =
     list |> averageSlidingWindow |> countIncreases
 
