@@ -9,9 +9,10 @@
 
     <ItemGroup>
         <Compile Include="CalculatePowerConsumption.fs" />
+        <Compile Include="Scrubbers.fs" />
         <Compile Include="Program.fs" />
         <Content Include="Day3Data.txt">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 

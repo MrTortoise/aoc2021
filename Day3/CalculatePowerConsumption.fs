@@ -20,43 +20,41 @@ let epsilon (line: string) =
 let calculatePower line = gamma line * epsilon line
 
 
-let addSignalToExisting(state: int[]) (item: string) =
+let addSignalToExisting (state: int []) (item: string) =
     let value c = if c = '1' then 1 else 0
-    
+    let incrementArrayValue index character =
+        Array.set state index (state.[index] + value character)
+        
     item
-    |> Seq.toArray    
-    |> Array.mapi (fun i c -> Array.set state i (state.[i] + value c))
+    |> Seq.toArray
+    |> Array.mapi incrementArrayValue
     |> ignore
-    
+
     state
-    
-let buildBinaryString(midpoint: int) (signals: int[]) =
+
+let buildBinaryString (midpoint: int) (signals: int []) =
     let value total = if (total > midpoint) then "1" else "0"
-    
-    let items =
-        signals
-        |> Array.map value
-    
+
+    let items = signals |> Array.map value
+
     String.concat "" items
 
 let findModalInput (input: string) =
     let lines =
         input.Trim().Split("\n")
         |> Array.map (fun i -> i.Trim())
-    let length = lines.Length
+
     let width = lines.[0].Length
-    let midpoint = length / 2
-    let buildBinaryMidpoint = buildBinaryString(midpoint)
-    let emptyArray = Array.zeroCreate(width)
+    let emptyArray = Array.zeroCreate (width)
+
+    let midpoint = lines.Length / 2
 
     lines
     |> Array.fold addSignalToExisting emptyArray
-    |> buildBinaryMidpoint
- 
+    |> buildBinaryString (midpoint)
+
 let powerFromInput (input: string) =
-    input
-    |> findModalInput
-    |> calculatePower
+    input |> findModalInput |> calculatePower
 
 [<Fact>]
 let ``00100 to decimal`` () = "00100" |> gamma |> should equal 4
@@ -86,8 +84,7 @@ let ``get power for example`` () =
 01010
 """
 
-    powerFromInput input
-    |> should equal 198
+    powerFromInput input |> should equal 198
 
 [<Fact>]
 let ``increases of the given data should be ...`` () =
