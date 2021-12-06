@@ -1,5 +1,6 @@
 module Tests
 
+open System.IO
 open Xunit
 
 let rec countIncreases list =
@@ -53,3 +54,12 @@ let ``example  list`` () =
     let count = countIncreases data
     Assert.Equal(7, count)
 
+
+[<Fact>]
+let ``the days data adds up to the right amount`` () =
+    let data =
+        File.ReadLines("Day1Data.txt")
+        |> Seq.map(int)
+        |> Seq.toList
+    let count = countIncreases data
+    Assert.Equal(1527,count)
