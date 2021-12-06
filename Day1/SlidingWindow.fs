@@ -1,46 +1,39 @@
 ﻿module Day1.SlidingWindow
 
+open System
 open System.IO
 
 open Xunit
 open FsUnit.Xunit
 
-let rec slidingWindow list =
+let rec slidingWindowCollect (list : list<int> ) : list<list<int>> =
+    let len = List.length list
     match list with
-    | [] -> [[]]
-    | [h] -> [[h]]
-    | i :: [j] -> [[i;j];[j]]
-    | i :: j :: [ k ] -> [[i;j;k];[j;k];[k]]
-    | _ -> failwith "todo"
-  //  | i :: tail -> [[] :: slidingWindow tail]
-  //  | i :: tail -> [List.take 3 list] //:: slidingWindow tail
-
+    | _ when len = 3 -> list :: []
+    | _ :: tail when List.length tail >= 2 -> List.take 3 list :: slidingWindowCollect tail
+    | _ -> failwith "list needs >= 3 items"
+    
 
 [<Fact>]
-let ``[] is [[]]`` ()=
-    let data = slidingWindow []
-    data |> should equal [[]]
-      
+let ``sliding window of 1 item is exception`` () = 
+    Assert.Throws<Exception>(fun () -> slidingWindowCollect [1] |> ignore)
+
 [<Fact>]
-let ``sliding window of 1 item is [[1]]`` () = 
+let ``sliding window of 2 item is exception`` () = 
+      Assert.Throws<Exception>(fun () -> slidingWindowCollect [1;2] |> ignore)
+
+[<Fact>]
+let ``sliding window of 3 item is [[1;2;3]]`` () = 
+    let data = slidingWindowCollect [1;2;3]
+    data |> should equal [[1;2;3]]
+
+[<Fact>]
+let ``sliding window of [1,2,3,4] item is [[1;2;3];[2;34];[3;4],[4]`` () = 
     // let data = [|199;200;208;210;200;207;240;269;260;263|]
-    let data = slidingWindow [1]
-    data |> should equal [[1]]
+    let data = slidingWindowCollect [1;2;3;4]
+    data |> should equal [[1;2;3];[2;3;4]]
 
 [<Fact>]
-let ``sliding window of 2 item is [[1;2];[2]]`` () = 
-    // let data = [|199;200;208;210;200;207;240;269;260;263|]
-    let data = slidingWindow [1;2]
-    data |> should equal [[1;2];[2]]
-
-[<Fact>]
-let ``sliding window of 3 item is [[1;2;3];[2;3];[3]]`` () = 
-    // let data = [|199;200;208;210;200;207;240;269;260;263|]
-    let data = slidingWindow [1;2;3]
-    data |> should equal [[1;2;3];[2;3];[3]]
-
-[<Fact>]
-let ``sliding window of 4 item is [[1;2;3];[2;34];[3;4],[4]`` () = 
-    // let data = [|199;200;208;210;200;207;240;269;260;263|]
-    let data = slidingWindow [1;2;3;4]
-    data |> should equal [[1;2;3];[2;3;4];[3;4];[4]]
+let ``sliding window sum turns [1;2;3;4] into [6,9,7,4]`` () =
+    List.length [1;2;3] > 2 |> should equal true 
+   
