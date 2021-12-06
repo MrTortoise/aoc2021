@@ -1,5 +1,6 @@
 ﻿module Day2.CalculateAimedPositionScalar
 
+open System.IO
 open Xunit
 open FsUnit.Xunit
 
@@ -74,3 +75,9 @@ forward 2
 """
 
     calculatePositionScalar input |> should equal 900
+
+[<Fact>]
+let ``increases of the given data should be ...`` () =
+    File.ReadAllText("Day2Data.txt")
+    |> calculatePositionScalar
+    |> should equal 1848454425
