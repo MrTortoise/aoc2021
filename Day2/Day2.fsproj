@@ -9,7 +9,11 @@
 
     <ItemGroup>
         <Compile Include="CalculatePositionScalar.fs"/>
+        <Compile Include="CalculateaimedPositionScalar.fs"/>
         <Compile Include="Program.fs"/>
+        <Content Include="Day2Data.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>

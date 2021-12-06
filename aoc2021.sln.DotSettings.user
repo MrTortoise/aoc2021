@@ -6,5 +6,8 @@
     &lt;TestId&gt;xUnit::246F87E4-F0EA-46B8-82D0-1BD685C2D701::net6.0::Day1.IncreasesOfTotalSlidingWindow.increases of the given data should be ...&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Tests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Day2.CalculatePositionScalar&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Day2.CalculateAimedPositionScalar.Forward 5 should result in 5&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Day2.CalculateAimedPositionScalar.Forward 5 down 5 should result in 5&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::88006301-7E1A-48EE-9D0A-0AE554234D9D::net6.0::Day2.CalculateAimedPositionScalar&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -1,5 +1,6 @@
 module Day2.CalculatePositionScalar
 
+open System.IO
 open Xunit
 open FsUnit.Xunit
 
@@ -26,7 +27,7 @@ let calculateScalar (position: Position) =
     | position -> position.Horizontal * position.Depth
 
 let calculatePositionScalar (input: string) =
-    let lines = input.Trim().Split "\n"   
+    let lines = input.Trim().Split "\n"
 
     lines
     |> Array.fold processCommand { Horizontal = 0; Depth = 0 }
@@ -43,6 +44,7 @@ let ``Forward 5 down 5 should result in 25`` () =
         """forward 5
 down 5
 """
+
     calculatePositionScalar input |> should equal 25
 
 [<Fact>]
@@ -52,6 +54,7 @@ let ``f5d5f8 should result in 65`` () =
 down 5
 forward 8
 """
+
     calculatePositionScalar input |> should equal 65
 
 [<Fact>]
@@ -65,4 +68,11 @@ up 3
 down 8
 forward 2
 """
+
     calculatePositionScalar input |> should equal 150
+
+[<Fact>]
+let ``increases of the given data should be ...`` () =
+    File.ReadAllText("Day2Data.txt")
+    |> calculatePositionScalar
+    |> should equal 1561344
