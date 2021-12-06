@@ -13,6 +13,7 @@ let processCommand (state: Position) (input: string) =
     let items = input.Split(" ")
 
     let quantity = int (items.[1])
+
     match items.[0] with
     | "forward" ->
         { state with
