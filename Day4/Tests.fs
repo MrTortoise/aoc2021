@@ -76,7 +76,7 @@ let rec parseLine (gameState: GameState) (lines: list<string>) index : GameState
             parseLine state tail (index + 1)
         else
             let boardIndexFront = (index - 2) / 6
-            let boardIndex = gameState.Boards.GetReverseIndex(boardIndexFront, 0)
+            let boardIndex = gameState.Boards.GetReverseIndex(0, boardIndexFront)
             let board = gameState.Boards.[boardIndex]
             let cells = List.append board.Cells numbers
             let newBoard = { board with Cells = cells }
@@ -103,18 +103,6 @@ let parseInput input =
 
 
 [<Fact>]
-let ``Extract Moves`` () =
-    let expected =
-        "7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1"
-            .Split(",")
-
-    exampleInput
-    |> stringToStringList
-    |> parseMoves
-    |> should equal expected
-
-
-[<Fact>]
 let ``can parse a board`` () =
     let testInput =
         """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
@@ -130,3 +118,12 @@ let ``can parse a board`` () =
     game.Boards.[0].Cells.[0] |> should equal 22
     game.Boards.[0].Cells.Length |> should equal 25
     game.Boards.[0].Cells.[24] |> should equal 19
+    game.Moves.Length |> should equal 27
+    game.Moves.[0] |> should equal 7
+    game.Moves.[26] |> should equal 1
+
+[<Fact>]
+let ``Parse exmaple boards and do some basic asserts`` () =
+    let game = parseInput exampleInput
+    game.Boards.Length |> should equal 3
+    game.Boards.[1].Cells.[5] |> should equal 9
