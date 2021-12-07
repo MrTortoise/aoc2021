@@ -16,7 +16,7 @@ let stringToStringList (input: string) =
 //    |> Array.mapi fun i d ->
 
 let findOxygenRatingOfColumn (index: int) (rows: list<string>) =
-    let midPoint = rows.Length / 2
+    let midPoint = (float) rows.Length / (float)2
 
     let total =
         rows
@@ -24,10 +24,10 @@ let findOxygenRatingOfColumn (index: int) (rows: list<string>) =
         |> List.filter (fun i -> i = '1')
         |> List.length
 
-    if total >= midPoint then '1' else '0'
+    if (float)total >= midPoint then '1' else '0'
 
 let findC02RatingOfColumn (index: int) (rows: list<string>) =
-    let midPoint = rows.Length / 2
+    let midPoint = (float)rows.Length / (float)2
 
     let total =
         rows
@@ -35,37 +35,31 @@ let findC02RatingOfColumn (index: int) (rows: list<string>) =
         |> List.filter (fun i -> i = '1')
         |> List.length
 
-    if total < midPoint then '1' else '0'
+    if (float)total > midPoint then '0' else '1'
+
+let rec reduceToRating reducer (rows: list<string>) columnIndex : string =
+    let ratingOfColumn = reducer columnIndex rows
+
+    let filteredRows =
+        rows
+        |> List.filter (fun r -> r.[columnIndex] = ratingOfColumn)
+
+    if filteredRows.Length > 1 then
+        reduceToRating reducer filteredRows (columnIndex + 1)
+    else if filteredRows.Length = 0 then
+        "0"
+    else
+        filteredRows.[0]
 
 let calculateScrubberScalar input =
 
     let rowList = input |> stringToStringList
 
-    let width = rowList.[0].Length
-
-    let rec reduceToRating reducer (rows: list<string>) columnIndex : string =
-        let ratingOfColumn = reducer columnIndex rows
-
-        let filteredRows =
-            rows
-            |> List.filter (fun r -> r.[columnIndex] = ratingOfColumn)
-
-        if filteredRows.Length > 1 then
-            reduceToRating reducer filteredRows (columnIndex + 1)
-        else if filteredRows.Length = 0 then
-            "0"
-        else
-            filteredRows.[0]
-        
-        
-
     let oxygenRatingGenerator = reduceToRating findOxygenRatingOfColumn
-
     let oxygenGeneratorRating =
         Convert.ToInt32(oxygenRatingGenerator rowList 0, 2)
 
     let co2RatingGenerator = reduceToRating findC02RatingOfColumn
-
     let co2GeneratorRating =
         Convert.ToInt32(co2RatingGenerator rowList 0, 2)
 
@@ -117,3 +111,49 @@ let ``2 row with a 1 is 0`` () =
 """
 
     input |> calculateScrubberScalar |> should equal 120
+
+[<Fact>]
+let ``life support of example`` () =
+    let input =
+        """00100
+11110
+10110
+10111
+10101
+01111
+00111
+11100
+10000
+11001
+00010
+01010"""
+
+    input |> calculateScrubberScalar |> should equal 60
+
+[<Fact>]
+let ``oxygen of example`` () =
+    let input =
+        """00100
+11110
+10110
+10111
+10101
+01111
+00111
+11100
+10000
+11001
+00010
+01010"""
+
+    let rows =
+        input
+        |> stringToStringList       
+    
+    let oxygenRatingGenerator = reduceToRating findOxygenRatingOfColumn
+    
+    Convert.ToInt32(oxygenRatingGenerator rows 0, 2)
+    |> should equal 23
+
+        
+    
