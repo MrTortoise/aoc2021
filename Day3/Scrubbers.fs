@@ -1,6 +1,7 @@
 ﻿module Day3.Scrubbers
 
 open System
+open System.IO
 open Xunit
 open FsUnit.Xunit
 
@@ -179,5 +180,11 @@ let ``co2 of example`` () =
     
     Convert.ToInt32(oxygenRatingGenerator rows 0, 2)
     |> should equal 10
+    
+[<Fact>]
+let ``increases of the given data should be ...`` () =
+    File.ReadAllText("Day3Data.txt")
+    |> calculateScrubberScalar
+    |> should equal 1092896
       
     
