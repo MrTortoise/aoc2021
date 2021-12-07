@@ -22,9 +22,10 @@ let calculatePower line = gamma line * epsilon line
 
 let addSignalToExisting (state: int []) (item: string) =
     let value c = if c = '1' then 1 else 0
+
     let incrementArrayValue index character =
         Array.set state index (state.[index] + value character)
-        
+
     item
     |> Seq.toArray
     |> Array.mapi incrementArrayValue
