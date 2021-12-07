@@ -185,6 +185,6 @@ let ``co2 of example`` () =
 let ``increases of the given data should be ...`` () =
     File.ReadAllText("Day3Data.txt")
     |> calculateScrubberScalar
-    |> should equal 1092896
+    |> should equal 4672151
       
     
