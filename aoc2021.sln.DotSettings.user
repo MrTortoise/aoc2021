@@ -18,5 +18,7 @@
     &lt;TestId&gt;xUnit::BFC3A44C-CFEC-4F16-A6D5-CEAE1291C1F4::net6.0::Day3.Scrubbers.given a char get all items that char&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::BFC3A44C-CFEC-4F16-A6D5-CEAE1291C1F4::net6.0::Day3.Scrubbers.single row with a 1 is 0&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::BFC3A44C-CFEC-4F16-A6D5-CEAE1291C1F4::net6.0::Day3.Scrubbers&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.Extract Moves&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.can parse a board&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

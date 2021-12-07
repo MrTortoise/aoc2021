@@ -17,7 +17,7 @@ let stringToStringList (input: string) =
 //    |> Array.mapi fun i d ->
 
 let findOxygenRatingOfColumn (index: int) (rows: list<string>) =
-    let midPoint = (float) rows.Length / (float)2
+    let midPoint = (float) rows.Length / (float) 2
 
     let total =
         rows
@@ -25,10 +25,13 @@ let findOxygenRatingOfColumn (index: int) (rows: list<string>) =
         |> List.filter (fun i -> i = '1')
         |> List.length
 
-    if (float)total >= midPoint then '1' else '0'
+    if (float) total >= midPoint then
+        '1'
+    else
+        '0'
 
 let findC02RatingOfColumn (index: int) (rows: list<string>) =
-    let midPoint = (float)rows.Length / (float)2
+    let midPoint = (float) rows.Length / (float) 2
 
     let total =
         rows
@@ -36,7 +39,10 @@ let findC02RatingOfColumn (index: int) (rows: list<string>) =
         |> List.filter (fun i -> i = '1')
         |> List.length
 
-    if (float)total >= midPoint then '0' else '1'
+    if (float) total >= midPoint then
+        '0'
+    else
+        '1'
 
 let rec reduceToRating reducer (rows: list<string>) columnIndex : string =
     let ratingOfColumn = reducer columnIndex rows
@@ -57,10 +63,12 @@ let calculateScrubberScalar input =
     let rowList = input |> stringToStringList
 
     let oxygenRatingGenerator = reduceToRating findOxygenRatingOfColumn
+
     let oxygenGeneratorRating =
         Convert.ToInt32(oxygenRatingGenerator rowList 0, 2)
 
     let co2RatingGenerator = reduceToRating findC02RatingOfColumn
+
     let co2GeneratorRating =
         Convert.ToInt32(co2RatingGenerator rowList 0, 2)
 
@@ -111,7 +119,9 @@ let ``2 row with a 1 is 0`` () =
 11110
 """
 
-    input |> calculateScrubberScalar |> should equal 120
+    input
+    |> calculateScrubberScalar
+    |> should equal 120
 
 [<Fact>]
 let ``life support of example`` () =
@@ -129,7 +139,9 @@ let ``life support of example`` () =
 00010
 01010"""
 
-    input |> calculateScrubberScalar |> should equal 230
+    input
+    |> calculateScrubberScalar
+    |> should equal 230
 
 [<Fact>]
 let ``oxygen of example`` () =
@@ -147,12 +159,10 @@ let ``oxygen of example`` () =
 00010
 01010"""
 
-    let rows =
-        input
-        |> stringToStringList       
-    
+    let rows = input |> stringToStringList
+
     let oxygenRatingGenerator = reduceToRating findOxygenRatingOfColumn
-    
+
     Convert.ToInt32(oxygenRatingGenerator rows 0, 2)
     |> should equal 23
 
@@ -172,19 +182,15 @@ let ``co2 of example`` () =
 00010
 01010"""
 
-    let rows =
-        input
-        |> stringToStringList       
-    
+    let rows = input |> stringToStringList
+
     let oxygenRatingGenerator = reduceToRating findC02RatingOfColumn
-    
+
     Convert.ToInt32(oxygenRatingGenerator rows 0, 2)
     |> should equal 10
-    
+
 [<Fact>]
 let ``increases of the given data should be ...`` () =
     File.ReadAllText("Day3Data.txt")
     |> calculateScrubberScalar
     |> should equal 4672151
-      
-    
