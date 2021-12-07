@@ -126,4 +126,7 @@ let ``can parse a board`` () =
  1 12 20 15 19"""
 
     let game = parseInput testInput
+    game.Boards.Length |> should equal 1
     game.Boards.[0].Cells.[0] |> should equal 22
+    game.Boards.[0].Cells.Length |> should equal 25
+    game.Boards.[0].Cells.[24] |> should equal 19
