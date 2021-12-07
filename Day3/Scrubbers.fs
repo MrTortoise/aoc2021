@@ -35,7 +35,7 @@ let findC02RatingOfColumn (index: int) (rows: list<string>) =
         |> List.filter (fun i -> i = '1')
         |> List.length
 
-    if total <= midPoint then '1' else '0'
+    if total < midPoint then '1' else '0'
 
 let calculateScrubberScalar input =
 
@@ -116,4 +116,4 @@ let ``2 row with a 1 is 0`` () =
 11110
 """
 
-    input |> calculateScrubberScalar |> should equal 0
+    input |> calculateScrubberScalar |> should equal 120
