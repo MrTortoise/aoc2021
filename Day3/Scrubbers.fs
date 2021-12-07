@@ -15,7 +15,7 @@ let stringToStringList (input: string) =
 //    input.Trim().Split("\n")
 //    |> Array.mapi fun i d -> 
     
-let mostCommon (index: int) (rows: list<string>) =
+let findOxygenRating (index: int) (rows: list<string>) =
     let midPoint = rows.Length/2
     
     let total =
@@ -25,6 +25,8 @@ let mostCommon (index: int) (rows: list<string>) =
         |> List.length
     
     if total > midPoint then "1" else "0"
+
+let calculateScrubberScalar _ = 0
     
 
 [<Fact>]
@@ -32,7 +34,7 @@ let ``Calculate the scrubber scalar`` () =
     scrubUp 2 2 |> should equal 4
 
 [<Fact>]
-let ``most common at index 0 is 1`` () =
+let ``oxygen rating at index 0 is 1`` () =
     let input = """00100
 11110
 10110
@@ -48,5 +50,32 @@ let ``most common at index 0 is 1`` () =
 
     input
     |> stringToStringList
-    |> mostCommon(0)
+    |> findOxygenRating(0)
     |> should equal "1"
+
+
+[<Fact>]
+let ``single row with a 0 is 0`` () =
+    let input = """00100"""
+
+    input
+    |> calculateScrubberScalar
+    |> should equal 0
+
+[<Fact>]
+let ``single row with a 1 is 0`` () =
+    let input = """10100"""
+
+    input
+    |> calculateScrubberScalar
+    |> should equal 0
+
+//[<Fact>]
+//let ``single row with a 1 is 0`` () =
+//    let input = """00100
+//11110
+//"""
+//
+//    input
+//    |> calculateScrubberScalar
+//    |> should equal 0
