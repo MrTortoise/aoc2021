@@ -10,42 +10,17 @@ type Board =
 
 type GameState =
     { Moves: list<int>
-      Boards: list<Board> }
+      Boards: list<Board>
+      Score: int }
 
 let offset = 2
 let boardSize = 5
 let gap = 1
 
-let exampleInput =
-    """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
-
-22 13 17 11  0
- 8  2 23  4 24
-21  9 14 16  7
- 6 10  3 18  5
- 1 12 20 15 19
-
- 3 15  0  2 22
- 9 18 13 17  5
-19  8  7 25 23
-20 11 10 24  4
-14 21 16 12  6
-
-14 21 17 24  4
-10 16 15  9 19
-18  8 23 26 20
-22 11 13  6  5
- 2  0 12  3  7"""
-
 let stringToStringList (input: string) =
     input.Trim().Split("\n")
     |> Array.map (fun i -> i.Trim())
     |> Seq.toList
-
-let parseMoves (input: list<string>) =
-    input.[0]
-        .Split([| "," |], StringSplitOptions.None)
-    |> Array.map int
 
 let replace source index item =
     source
@@ -68,21 +43,29 @@ let rec parseLine (gameState: GameState) (lines: list<string>) index : GameState
             |> List.map (fun i -> int (i.Trim()))
 
         let boardRow = (index - 2) % 6
+
         if (boardRow = 0) then
             let boards =
-                { Cells = numbers; Matched = [] } :: gameState.Boards 
+                { Cells = numbers; Matched = [] }
+                :: gameState.Boards
 
             let state = { gameState with Boards = boards }
             parseLine state tail (index + 1)
         else
             let boardIndexFront = (index - 2) / 6
-            let boardIndex = gameState.Boards.GetReverseIndex(0, boardIndexFront)
+
+            let boardIndex =
+                gameState.Boards.GetReverseIndex(0, boardIndexFront)
+
             let board = gameState.Boards.[boardIndex]
             let cells = List.append board.Cells numbers
             let newBoard = { board with Cells = cells }
-            let boards = replace gameState.Boards boardIndex newBoard
-            let state = {gameState with Boards = boards}
-            parseLine state tail (index+1)
+
+            let boards =
+                replace gameState.Boards boardIndex newBoard
+
+            let state = { gameState with Boards = boards }
+            parseLine state tail (index + 1)
 
     match lines with
     | [] -> gameState
@@ -93,14 +76,120 @@ let rec parseLine (gameState: GameState) (lines: list<string>) index : GameState
             parseLine gameState tail (index + 1)
         else
             parseBoardLine l tail
-            
+
 let parseInput input =
     let lines = input |> stringToStringList
-    let gameState = { Moves = []; Boards = [] }
+    let gameState = { Moves = []; Boards = []; Score = 0 }
 
     parseLine gameState lines 0
 
 
+
+let runGame (gameState: GameState) : int =
+    let applyMoveToBoard move (board: Board) =
+        if List.contains move board.Cells then
+            { board with
+                  Matched = move :: board.Matched }
+        else
+            board
+
+    let checkForHorizontalWin (board: Board) : bool =
+        let cellMatches row =
+            row
+            |> List.forall (fun c -> List.contains c board.Matched)
+        List.chunkBySize 5 board.Cells
+        |> List.exists cellMatches
+
+    let checkForVerticalWin (board: Board) =
+        let matches = board.Matched
+        let cells: (int [] []) = (Array.create 5 (Array.create 5 0))
+
+        board.Cells
+        |> List.iteri
+            (fun i v ->
+                let row = i / 5
+                let col = i % 5
+                Array.set cells.[row] col v)
+
+        let rec checkColumn (column: int) (row: int) =
+            let matcher i =
+                List.contains cells.[i].[column] matches
+
+            match row with
+            | 0 -> matcher 0
+            | i ->
+                if not (matcher i) then
+                    false
+                else
+                    checkColumn (i - 1) column
+
+        let rec checkAllColumns column =
+            match column with
+            | 0 -> checkColumn 0 4
+            | i ->
+                if not (checkColumn i 4) then
+                    checkAllColumns (column - 1)
+                else
+                    true
+
+        checkAllColumns 4
+
+    let scoreBoard (board: Board) =
+        board.Cells
+        |> List.filter (fun i -> not (List.contains i board.Matched))
+        |> List.sum
+
+    let rec applyWinState state boards =
+        match boards with
+        | [] -> state
+        | b :: tail ->
+            let horizontalWin = checkForHorizontalWin b
+            let verticalWin = checkForVerticalWin b
+
+            if (horizontalWin || verticalWin) then
+                { state with Score = scoreBoard b }
+            else
+                applyWinState state tail
+
+    let rec applyMoves (state: GameState) (moves: list<int>) =
+        match moves with
+        | [] -> 0
+        | h :: tail ->
+            let moveToApplyToBoard = applyMoveToBoard h
+            let boards =
+                state.Boards
+                |> List.map moveToApplyToBoard
+                
+            let stateWithMove = {state with Boards = boards}
+            let stateWithWin = applyWinState stateWithMove boards
+
+            if stateWithWin.Score = 0 then
+                applyMoves stateWithWin tail
+            else
+                stateWithWin.Score * h
+
+    applyMoves gameState gameState.Moves
+
+let exampleInput =
+    """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
+
+22 13 17 11  0
+ 8  2 23  4 24
+21  9 14 16  7
+ 6 10  3 18  5
+ 1 12 20 15 19
+
+ 3 15  0  2 22
+ 9 18 13 17  5
+19  8  7 25 23
+20 11 10 24  4
+14 21 16 12  6
+
+14 21 17 24  4
+10 16 15  9 19
+18  8 23 26 20
+22 11 13  6  5
+ 2  0 12  3  7"""
 
 [<Fact>]
 let ``can parse a board`` () =
@@ -123,7 +212,35 @@ let ``can parse a board`` () =
     game.Moves.[26] |> should equal 1
 
 [<Fact>]
-let ``Parse exmaple boards and do some basic asserts`` () =
+let ``Parse example boards and do some basic asserts`` () =
     let game = parseInput exampleInput
     game.Boards.Length |> should equal 3
     game.Boards.[1].Cells.[5] |> should equal 9
+
+[<Fact>]
+let ``play through the moves and find a horizontal winner`` () =
+    let testInput =
+        """22,13,17,0,11
+
+22 13 17 11  0
+ 8  2 23  4 24
+21  9 14 16  7
+ 6 10  3 18  5
+ 1 12 20 15 19""" //237
+    let score = parseInput testInput |> runGame
+
+    score |> should equal 2607
+
+[<Fact>]
+let ``play through the moves and find a vertical winner`` () =
+    let testInput =
+        """22,8,21,6,1
+
+22 13 17 11  0
+ 8  2 23  4 24
+21  9 14 16  7
+ 6 10  3 18  5
+ 1 12 20 15 19""" //242
+    let score = parseInput testInput |> runGame
+
+    score |> should equal 242

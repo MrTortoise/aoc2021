@@ -21,5 +21,8 @@
     &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.Extract Moves&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.can parse a board&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.Parse exmaple boards and do some basic asserts&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.play through the moves and find a winner&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.play through the moves and find a horizontal winner&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.play through the moves and find a vertical winner&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
