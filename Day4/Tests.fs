@@ -102,18 +102,18 @@ let runGame (gameState: GameState) : int =
 
     let checkForVerticalWin (board: Board) =
         let matches = board.Matched
-        let cells: (int [] []) = (Array.create 5 (Array.create 5 0))
+        let cells =  Array2D.create 5 5 0 
 
         board.Cells
         |> List.iteri
             (fun i v ->
                 let row = i / 5
                 let col = i % 5
-                Array.set cells.[row] col v)
+                cells.[row,col] <- v)
 
         let rec checkColumn (column: int) (row: int) =
             let matcher i =
-                List.contains cells.[i].[column] matches
+                List.contains cells.[i,column] matches
 
             match row with
             | 0 -> matcher 0
@@ -121,7 +121,7 @@ let runGame (gameState: GameState) : int =
                 if not (matcher i) then
                     false
                 else
-                    checkColumn (i - 1) column
+                    checkColumn  column (i - 1)
 
         let rec checkAllColumns column =
             match column with
