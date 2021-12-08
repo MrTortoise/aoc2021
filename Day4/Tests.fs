@@ -1,6 +1,7 @@
 module Tests
 
 open System
+open System.IO
 open Xunit
 open FsUnit.Xunit
 
@@ -242,5 +243,15 @@ let ``play through the moves and find a vertical winner`` () =
  6 10  3 18  5
  1 12 20 15 19""" //242
     let score = parseInput testInput |> runGame
-
     score |> should equal 242
+ 
+[<Fact>]
+let ``play through the example input and find score`` () =
+   parseInput exampleInput |> runGame |> should equal 242
+
+[<Fact>]
+let ``play through the test input and find score`` () =
+    File.ReadAllText("Day4Data.txt")
+    |> parseInput
+    |> runGame 
+    |> should equal 10374
