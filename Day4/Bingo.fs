@@ -1,4 +1,4 @@
-module Tests
+module Day4.Bingo
 
 open System
 open System.IO
