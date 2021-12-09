@@ -27,6 +27,7 @@
       &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests.play through the moves and find a vertical winner&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Tests&lt;/TestId&gt;&#xD;
       &lt;TestId&gt;xUnit::EC489379-1066-4F59-88EC-BF59CD5683A7::net6.0::Day4.Bingo.play through the example input and losing score&lt;/TestId&gt;&#xD;
+      &lt;TestId&gt;xUnit::703FEA14-6CA7-4085-AE16-ACE70A72BD52::net6.0::Day5.HydroThermal.can add a row and count its items&lt;/TestId&gt;&#xD;
     &lt;/TestAncestor&gt;&#xD;
     &lt;Project Location="C:\git\aoc2021\aoc2021\Day4" Presentation="&amp;lt;Day4&amp;gt;" /&gt;&#xD;
   &lt;/Or&gt;&#xD;

@@ -90,28 +90,28 @@ let applyMoveToBoard move (board: Board) =
               Matched = move :: board.Matched }
     else
         board
-            
+
 let checkForHorizontalWin (board: Board) : bool =
     let cellMatches row =
         row
         |> List.forall (fun c -> List.contains c board.Matched)
+
     List.chunkBySize 5 board.Cells
     |> List.exists cellMatches
 
 let checkForVerticalWin (board: Board) =
     let matches = board.Matched
-    let cells =  Array2D.create 5 5 0 
+    let cells = Array2D.create 5 5 0
 
     board.Cells
     |> List.iteri
         (fun i v ->
             let row = i / 5
             let col = i % 5
-            cells.[row,col] <- v)
+            cells.[row, col] <- v)
 
     let rec checkColumn (column: int) (row: int) =
-        let matcher i =
-            List.contains cells.[i,column] matches
+        let matcher i = List.contains cells.[i, column] matches
 
         match row with
         | 0 -> matcher 0
@@ -119,7 +119,7 @@ let checkForVerticalWin (board: Board) =
             if not (matcher i) then
                 false
             else
-                checkColumn  column (i - 1)
+                checkColumn column (i - 1)
 
     let rec checkAllColumns column =
         match column with
@@ -141,7 +141,7 @@ let isBoardAWinner board =
     let horizontalWin = checkForHorizontalWin board
     let verticalWin = checkForVerticalWin board
     horizontalWin || verticalWin
-    
+
 let rec applyWinState state boards =
     match boards with
     | [] -> state
@@ -150,18 +150,18 @@ let rec applyWinState state boards =
             { state with Score = scoreBoard b }
         else
             applyWinState state tail
-        
+
 let runGame (gameState: GameState) : int =
     let rec applyMovesFindWinner (state: GameState) (moves: list<int>) =
         match moves with
         | [] -> 0
         | h :: tail ->
             let moveToApplyToBoard = applyMoveToBoard h
+
             let boards =
-                state.Boards
-                |> List.map moveToApplyToBoard
-                
-            let stateWithMove = {state with Boards = boards}
+                state.Boards |> List.map moveToApplyToBoard
+
+            let stateWithMove = { state with Boards = boards }
             let stateWithWin = applyWinState stateWithMove boards
 
             if stateWithWin.Score = 0 then
@@ -171,30 +171,33 @@ let runGame (gameState: GameState) : int =
 
     applyMovesFindWinner gameState gameState.Moves
 
-let loseGame (gameState:GameState) : int =
+let loseGame (gameState: GameState) : int =
     let rec applyMovesToFindLoser (state: GameState) (moves: list<int>) =
         match moves with
         | [] -> failwith "ran out of moves!"
         | h :: tail ->
             let moveToApplyToBoard = applyMoveToBoard h
+
             let boards =
-                state.Boards
-                |> List.map moveToApplyToBoard
-            
+                state.Boards |> List.map moveToApplyToBoard
+
             let remainingBoards =
                 if boards.Length > 1 then
-                    boards |> List.filter (fun b -> not (isBoardAWinner b))
+                    boards
+                    |> List.filter (fun b -> not (isBoardAWinner b))
                 else
                     boards
-            
-            let stateWithBoardsRemoved = {state with Boards = remainingBoards}
-            if(stateWithBoardsRemoved.Boards.Length = 1 && isBoardAWinner stateWithBoardsRemoved.Boards.[0]) then
+
+            let stateWithBoardsRemoved = { state with Boards = remainingBoards }
+
+            if (stateWithBoardsRemoved.Boards.Length = 1
+                && isBoardAWinner stateWithBoardsRemoved.Boards.[0]) then
                 scoreBoard stateWithBoardsRemoved.Boards.[0] * h
             else
-                applyMovesToFindLoser stateWithBoardsRemoved tail                    
-            
-    applyMovesToFindLoser gameState gameState.Moves 
-    
+                applyMovesToFindLoser stateWithBoardsRemoved tail
+
+    applyMovesToFindLoser gameState gameState.Moves
+
 let exampleInput =
     """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
@@ -252,6 +255,7 @@ let ``play through the moves and find a horizontal winner`` () =
 21  9 14 16  7
  6 10  3 18  5
  1 12 20 15 19""" //237
+
     let score = parseInput testInput |> runGame
 
     score |> should equal 2607
@@ -266,27 +270,32 @@ let ``play through the moves and find a vertical winner`` () =
 21  9 14 16  7
  6 10  3 18  5
  1 12 20 15 19""" //242
+
     let score = parseInput testInput |> runGame
     score |> should equal 242
- 
+
 [<Fact>]
 let ``play through the example input and find score`` () =
-   parseInput exampleInput |> runGame |> should equal 4512
+    parseInput exampleInput
+    |> runGame
+    |> should equal 4512
 
 [<Fact>]
 let ``play through the test input and find score`` () =
     File.ReadAllText("Day4Data.txt")
     |> parseInput
-    |> runGame 
+    |> runGame
     |> should equal 10374
 
 [<Fact>]
 let ``play through the example input and losing score`` () =
-   parseInput exampleInput |> loseGame |> should equal 1924
+    parseInput exampleInput
+    |> loseGame
+    |> should equal 1924
 
 [<Fact>]
 let ``play through the test input and find losing score`` () =
     File.ReadAllText("Day4Data.txt")
     |> parseInput
-    |> loseGame 
+    |> loseGame
     |> should equal 10374
