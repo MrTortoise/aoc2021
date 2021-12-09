@@ -84,75 +84,75 @@ let parseInput input =
 
     parseLine gameState lines 0
 
+let applyMoveToBoard move (board: Board) =
+    if List.contains move board.Cells then
+        { board with
+              Matched = move :: board.Matched }
+    else
+        board
+            
+let checkForHorizontalWin (board: Board) : bool =
+    let cellMatches row =
+        row
+        |> List.forall (fun c -> List.contains c board.Matched)
+    List.chunkBySize 5 board.Cells
+    |> List.exists cellMatches
 
+let checkForVerticalWin (board: Board) =
+    let matches = board.Matched
+    let cells =  Array2D.create 5 5 0 
 
-let runGame (gameState: GameState) : int =
-    let applyMoveToBoard move (board: Board) =
-        if List.contains move board.Cells then
-            { board with
-                  Matched = move :: board.Matched }
-        else
-            board
+    board.Cells
+    |> List.iteri
+        (fun i v ->
+            let row = i / 5
+            let col = i % 5
+            cells.[row,col] <- v)
 
-    let checkForHorizontalWin (board: Board) : bool =
-        let cellMatches row =
-            row
-            |> List.forall (fun c -> List.contains c board.Matched)
-        List.chunkBySize 5 board.Cells
-        |> List.exists cellMatches
+    let rec checkColumn (column: int) (row: int) =
+        let matcher i =
+            List.contains cells.[i,column] matches
 
-    let checkForVerticalWin (board: Board) =
-        let matches = board.Matched
-        let cells =  Array2D.create 5 5 0 
-
-        board.Cells
-        |> List.iteri
-            (fun i v ->
-                let row = i / 5
-                let col = i % 5
-                cells.[row,col] <- v)
-
-        let rec checkColumn (column: int) (row: int) =
-            let matcher i =
-                List.contains cells.[i,column] matches
-
-            match row with
-            | 0 -> matcher 0
-            | i ->
-                if not (matcher i) then
-                    false
-                else
-                    checkColumn  column (i - 1)
-
-        let rec checkAllColumns column =
-            match column with
-            | 0 -> checkColumn 0 4
-            | i ->
-                if not (checkColumn i 4) then
-                    checkAllColumns (column - 1)
-                else
-                    true
-
-        checkAllColumns 4
-
-    let scoreBoard (board: Board) =
-        board.Cells
-        |> List.filter (fun i -> not (List.contains i board.Matched))
-        |> List.sum
-
-    let rec applyWinState state boards =
-        match boards with
-        | [] -> state
-        | b :: tail ->
-            let horizontalWin = checkForHorizontalWin b
-            let verticalWin = checkForVerticalWin b
-
-            if (horizontalWin || verticalWin) then
-                { state with Score = scoreBoard b }
+        match row with
+        | 0 -> matcher 0
+        | i ->
+            if not (matcher i) then
+                false
             else
-                applyWinState state tail
+                checkColumn  column (i - 1)
 
-    let rec applyMoves (state: GameState) (moves: list<int>) =
+    let rec checkAllColumns column =
+        match column with
+        | 0 -> checkColumn 0 4
+        | i ->
+            if not (checkColumn i 4) then
+                checkAllColumns (column - 1)
+            else
+                true
+
+    checkAllColumns 4
+
+let scoreBoard (board: Board) =
+    board.Cells
+    |> List.filter (fun i -> not (List.contains i board.Matched))
+    |> List.sum
+
+let isBoardAWinner board =
+    let horizontalWin = checkForHorizontalWin board
+    let verticalWin = checkForVerticalWin board
+    horizontalWin || verticalWin
+    
+let rec applyWinState state boards =
+    match boards with
+    | [] -> state
+    | b :: tail ->
+        if (isBoardAWinner b) then
+            { state with Score = scoreBoard b }
+        else
+            applyWinState state tail
+        
+let runGame (gameState: GameState) : int =
+    let rec applyMovesFindWinner (state: GameState) (moves: list<int>) =
         match moves with
         | [] -> 0
         | h :: tail ->
@@ -165,12 +165,36 @@ let runGame (gameState: GameState) : int =
             let stateWithWin = applyWinState stateWithMove boards
 
             if stateWithWin.Score = 0 then
-                applyMoves stateWithWin tail
+                applyMovesFindWinner stateWithWin tail
             else
                 stateWithWin.Score * h
 
-    applyMoves gameState gameState.Moves
+    applyMovesFindWinner gameState gameState.Moves
 
+let loseGame (gameState:GameState) : int =
+    let rec applyMovesToFindLoser (state: GameState) (moves: list<int>) =
+        match moves with
+        | [] -> failwith "ran out of moves!"
+        | h :: tail ->
+            let moveToApplyToBoard = applyMoveToBoard h
+            let boards =
+                state.Boards
+                |> List.map moveToApplyToBoard
+            
+            let remainingBoards =
+                if boards.Length > 1 then
+                    boards |> List.filter (fun b -> not (isBoardAWinner b))
+                else
+                    boards
+            
+            let stateWithBoardsRemoved = {state with Boards = remainingBoards}
+            if(stateWithBoardsRemoved.Boards.Length = 1 && isBoardAWinner stateWithBoardsRemoved.Boards.[0]) then
+                scoreBoard stateWithBoardsRemoved.Boards.[0] * h
+            else
+                applyMovesToFindLoser stateWithBoardsRemoved tail                    
+            
+    applyMovesToFindLoser gameState gameState.Moves 
+    
 let exampleInput =
     """7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1
 
@@ -247,11 +271,22 @@ let ``play through the moves and find a vertical winner`` () =
  
 [<Fact>]
 let ``play through the example input and find score`` () =
-   parseInput exampleInput |> runGame |> should equal 242
+   parseInput exampleInput |> runGame |> should equal 4512
 
 [<Fact>]
 let ``play through the test input and find score`` () =
     File.ReadAllText("Day4Data.txt")
     |> parseInput
     |> runGame 
+    |> should equal 10374
+
+[<Fact>]
+let ``play through the example input and losing score`` () =
+   parseInput exampleInput |> loseGame |> should equal 1924
+
+[<Fact>]
+let ``play through the test input and find losing score`` () =
+    File.ReadAllText("Day4Data.txt")
+    |> parseInput
+    |> loseGame 
     |> should equal 10374
