@@ -75,15 +75,17 @@ let ventLineToPointList (vent: Line) : list<Point> =
                             if (vents.Start.Y = vents.End.Y) then
                                 vents.Start.Y
                             else
-                                (vents.Start.Y + 1) }
+                                if (vents.Start.Y > vents.End.Y) then
+                                    (vents.Start.Y - 1) 
+                                else
+                                    (vents.Start.Y + 1)
+                            }
                   End = vents.End }
 
             addLineToVentList restOfLine (vents.Start :: l)
 
-    if (vent.Start.X = vent.End.X || vent.Start.Y = vent.End.Y) then
-        List.empty |> addLineToVentList vent
-    else
-        []
+    List.empty |> addLineToVentList vent
+
 
 let parseVents (input: string) =
     input
@@ -204,7 +206,7 @@ let ``take scored list of vents and return only those with score > 1`` () =
     |> should equal [ { X = 2; Y = 2 } ]
 
 [<Fact>]
-let ``example data results in expected results`` () =
+let ``example data results in expected results p2`` () =
     let exampleData =
         """0,9 -> 5,9
 8,0 -> 0,8
@@ -220,11 +222,11 @@ let ``example data results in expected results`` () =
     exampleData
     |> findNumberOfOverlappingVentLines
     |> List.length
-    |> should equal 5
+    |> should equal 12
 
 [<Fact>]
-let ``d5 p1 data test`` () =
+let ``d5 p2 data test`` () =
     File.ReadAllText("Day5Data.txt")
     |> findNumberOfOverlappingVentLines
     |> List.length
-    |> should equal 6564
+    |> should equal 19172
