@@ -78,5 +78,6 @@
     &lt;TestId&gt;xUnit::703FEA14-6CA7-4085-AE16-ACE70A72BD52::net6.0::Day5.HydroThermal.parse a sorted line into a point list&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::703FEA14-6CA7-4085-AE16-ACE70A72BD52::net6.0::Day5.HydroThermal.parse 2 rows into point lists&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::703FEA14-6CA7-4085-AE16-ACE70A72BD52::net6.0::Day5.HydroThermal.points with lower x are less than&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::703FEA14-6CA7-4085-AE16-ACE70A72BD52::net6.0::Day5.HydroThermal.points with equal x compare y&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

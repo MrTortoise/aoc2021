@@ -106,6 +106,12 @@ let ``points with lower x are less than`` () =
     |> List.sort
     |> should equal [{X=0;Y=0};{X=1;Y=0}]
 
+[<Fact>]
+let ``points with equal x compare y`` () =
+    [{X=1;Y=1};{X=1;Y=0}]
+    |> List.sort
+    |> should equal [{X=1;Y=0};{X=1;Y=1}]
+
 
 [<Fact>]
 let ``parse a row into a sorted line`` () =
