@@ -27,10 +27,10 @@ type Point =
 
     interface IComparable<Point> with
         member this.CompareTo other =
-            let xCompare = this.X.CompareTo  other.X
+            let xCompare = this.X.CompareTo other.X
 
             if (xCompare = 0) then
-               this.Y.CompareTo  other.Y 
+                this.Y.CompareTo other.Y
             else
                 xCompare
 
@@ -77,7 +77,7 @@ let ventLineToPointList (vent: Line) : list<Point> =
 
             addLineToVentList restOfLine (vents.Start :: l)
 
-    List.empty |> addLineToVentList vent 
+    List.empty |> addLineToVentList vent
 
 let parseVents (input: string) =
     input
@@ -102,15 +102,15 @@ let countWithScoreAbove score vents =
 
 [<Fact>]
 let ``points with lower x are less than`` () =
-    [{X=1;Y=0};{X=0;Y=0}]
+    [ { X = 1; Y = 0 }; { X = 0; Y = 0 } ]
     |> List.sort
-    |> should equal [{X=0;Y=0};{X=1;Y=0}]
+    |> should equal [ { X = 0; Y = 0 }; { X = 1; Y = 0 } ]
 
 [<Fact>]
 let ``points with equal x compare y`` () =
-    [{X=1;Y=1};{X=1;Y=0}]
+    [ { X = 1; Y = 1 }; { X = 1; Y = 0 } ]
     |> List.sort
-    |> should equal [{X=1;Y=0};{X=1;Y=1}]
+    |> should equal [ { X = 1; Y = 0 }; { X = 1; Y = 1 } ]
 
 
 [<Fact>]
@@ -126,12 +126,12 @@ let ``parse a row into a sorted line`` () =
 
 [<Fact>]
 let ``parse a sorted line into a point list`` () =
-     { Start = { X = 2; Y = 1 }
-       End = { X = 2; Y = 2 } }
-     |> ventLineToPointList
-     |> List.sort
-     |> should equal [{X=2;Y=1};{X=2;Y=2}]
-    
+    { Start = { X = 2; Y = 1 }
+      End = { X = 2; Y = 2 } }
+    |> ventLineToPointList
+    |> List.sort
+    |> should equal [ { X = 2; Y = 1 }; { X = 2; Y = 2 } ]
+
 [<Fact>]
 let ``parse 2 rows into point lists`` () =
     let ventLine =
@@ -143,5 +143,7 @@ let ``parse 2 rows into point lists`` () =
     ventLine
     |> should
         equal
-        { Start = { X = 2; Y = 1 }
-          End = { X = 2; Y = 2 } }
+        [ { X = 1; Y = 2 }
+          { X = 2; Y = 1 }
+          { X = 2; Y = 2 }
+          { X = 2; Y = 2 } ]
