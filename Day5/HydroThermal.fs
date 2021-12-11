@@ -87,18 +87,15 @@ let parseVents (input: string) =
     |> List.concat
     |> List.sort
 
+let toScoredVents pointList =
+    pointList
+    |> List.groupBy id
+    |> List.map (fun (a, b) -> (a, List.length b))
 
-let countWithScoreAbove score vents =
-    vents
-    |> Map.keys
-    |> Seq.map
-        (fun k ->
-            vents.[k]
-            |> Map.values
-            |> Seq.filter (fun v -> v > score)
-            |> Seq.length)
-    |> Seq.sum
-
+let filterOutNonOverlappingVentLines pointScoreTupleList =
+    pointScoreTupleList
+    |> List.filter (fun (_, number) -> number > 1)
+    |> List.map fst
 
 [<Fact>]
 let ``points with lower x are less than`` () =
@@ -147,3 +144,44 @@ let ``parse 2 rows into point lists`` () =
           { X = 2; Y = 1 }
           { X = 2; Y = 2 }
           { X = 2; Y = 2 } ]
+
+[<Fact>]
+let ``point lists into list that counts dupes`` () =
+    [ { X = 1; Y = 2 }
+      { X = 2; Y = 1 }
+      { X = 2; Y = 2 }
+      { X = 2; Y = 2 } ]
+    |> toScoredVents
+    |> should
+        equal
+        [ ({ X = 1; Y = 2 }, 1)
+          ({ X = 2; Y = 1 }, 1)
+          ({ X = 2; Y = 2 }, 2) ]
+        
+
+[<Fact>]
+let ``take scored list of vents and return only those with score > 1`` () =
+    [ ({ X = 1; Y = 2 }, 1)
+      ({ X = 2; Y = 1 }, 1)
+      ({ X = 2; Y = 2 }, 2) ]
+    |> filterOutNonOverlappingVentLines    
+    |> should equal [{ X = 2; Y = 2 }]
+
+[<Fact>]
+let ``example data results in expected results`` () =
+    let exampleData =    """0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2"""
+    exampleData
+    |> parseVents
+    |> toScoredVents
+    |> filterOutNonOverlappingVentLines
+    |> List.length
+    |> should equal 5
