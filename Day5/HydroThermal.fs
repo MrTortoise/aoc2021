@@ -57,8 +57,10 @@ let parseVentLine (line: string) =
 
 
 let ventLineToPointList (vent: Line) : list<Point> =
+    
+    
     let rec addLineToVentList (vents: Line) l =
-        if (vents.Start = vents.End) then
+        if (vents.Start >= vents.End) then
             vents.Start :: l
         else
             let restOfLine =
@@ -77,7 +79,10 @@ let ventLineToPointList (vent: Line) : list<Point> =
 
             addLineToVentList restOfLine (vents.Start :: l)
 
-    List.empty |> addLineToVentList vent
+    if (vent.Start.X = vent.End.X || vent.Start.Y = vent.End.Y) then
+        List.empty |> addLineToVentList vent
+    else
+        []
 
 let parseVents (input: string) =
     input
@@ -130,6 +135,30 @@ let ``parse a sorted line into a point list`` () =
     |> should equal [ { X = 2; Y = 1 }; { X = 2; Y = 2 } ]
 
 [<Fact>]
+let ``parse a sorted line into a point list horizontal`` () =
+    { Start = { X = 0; Y = 2 }
+      End = { X = 2; Y = 2 } }
+    |> ventLineToPointList
+    |> List.sort
+    |> should
+        equal
+        [ { X = 0; Y = 2 }
+          { X = 1; Y = 2 }
+          { X = 2; Y = 2 } ]
+
+[<Fact>]
+let ``parse a sorted line into a point list diagonal`` () =
+    { Start = { X = 0; Y = 1 }
+      End = { X = 2; Y = 3 } }
+    |> ventLineToPointList
+    |> List.sort
+    |> should
+        equal
+        [ { X = 0; Y = 1 }
+          { X = 1; Y = 2 }
+          { X = 2; Y = 3 } ]
+
+[<Fact>]
 let ``parse 2 rows into point lists`` () =
     let ventLine =
         """2,2 -> 2,1
@@ -157,19 +186,20 @@ let ``point lists into list that counts dupes`` () =
         [ ({ X = 1; Y = 2 }, 1)
           ({ X = 2; Y = 1 }, 1)
           ({ X = 2; Y = 2 }, 2) ]
-        
+
 
 [<Fact>]
 let ``take scored list of vents and return only those with score > 1`` () =
     [ ({ X = 1; Y = 2 }, 1)
       ({ X = 2; Y = 1 }, 1)
       ({ X = 2; Y = 2 }, 2) ]
-    |> filterOutNonOverlappingVentLines    
-    |> should equal [{ X = 2; Y = 2 }]
+    |> filterOutNonOverlappingVentLines
+    |> should equal [ { X = 2; Y = 2 } ]
 
 [<Fact>]
 let ``example data results in expected results`` () =
-    let exampleData =    """0,9 -> 5,9
+    let exampleData =
+        """0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
 2,2 -> 2,1
@@ -179,6 +209,7 @@ let ``example data results in expected results`` () =
 3,4 -> 1,4
 0,0 -> 8,8
 5,5 -> 8,2"""
+
     exampleData
     |> parseVents
     |> toScoredVents
