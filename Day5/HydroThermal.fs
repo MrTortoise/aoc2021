@@ -1,6 +1,7 @@
 module Day5.HydroThermal
 
 open System
+open System.IO
 open Xunit
 open FsUnit.Xunit
 
@@ -101,6 +102,12 @@ let filterOutNonOverlappingVentLines pointScoreTupleList =
     pointScoreTupleList
     |> List.filter (fun (_, number) -> number > 1)
     |> List.map fst
+
+let findNumberOfOverlappingVentLines input =
+    input
+    |> parseVents
+    |> toScoredVents
+    |> filterOutNonOverlappingVentLines
 
 [<Fact>]
 let ``points with lower x are less than`` () =
@@ -211,8 +218,13 @@ let ``example data results in expected results`` () =
 5,5 -> 8,2"""
 
     exampleData
-    |> parseVents
-    |> toScoredVents
-    |> filterOutNonOverlappingVentLines
+    |> findNumberOfOverlappingVentLines
     |> List.length
     |> should equal 5
+
+[<Fact>]
+let ``d5 p1 data test`` () =
+    File.ReadAllText("Day5Data.txt")
+    |> findNumberOfOverlappingVentLines
+    |> List.length
+    |> should equal 6564
