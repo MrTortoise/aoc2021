@@ -8,8 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Tests.fs" />
+        <Compile Include="LanternFish.fs" />
         <Compile Include="Program.fs" />
+        <Content Include="Day6Data.txt">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
