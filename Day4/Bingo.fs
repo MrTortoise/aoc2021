@@ -298,4 +298,4 @@ let ``play through the test input and find losing score`` () =
     File.ReadAllText("Day4Data.txt")
     |> parseInput
     |> loseGame
-    |> should equal 10374
+    |> should equal 24742

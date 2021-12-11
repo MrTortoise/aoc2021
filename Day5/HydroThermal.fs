@@ -1,14 +1,40 @@
 module Day5.HydroThermal
 
+open System
 open Xunit
 open FsUnit.Xunit
 
-type Point = { X: int; Y: int }
-type Line = { Start: Point; End: Point }
+[<CustomComparison; CustomEquality>]
+type Point =
+    { X: int
+      Y: int }
+    interface IEquatable<Point> with
+        member this.Equals other =
+            other.X.Equals this.X && other.Y.Equals this.Y
 
-type Direction =
-    | Vertical of Line
-    | Horizontal of Line
+    override this.Equals other =
+        match other with
+        | :? Point as p -> (this :> IEquatable<_>).Equals p
+        | _ -> false
+
+    override this.GetHashCode() = HashCode.Combine(this.X, this.Y)
+
+    interface IComparable with
+        member this.CompareTo other =
+            match other with
+            | :? Point as p -> (this :> IComparable<_>).CompareTo p
+            | _ -> -1
+
+    interface IComparable<Point> with
+        member this.CompareTo other =
+            let xCompare = this.X.CompareTo  other.X
+
+            if (xCompare = 0) then
+               this.Y.CompareTo  other.Y 
+            else
+                xCompare
+
+type Line = { Start: Point; End: Point }
 
 let stringToStringList (input: string) =
     input.Trim().Split("\n")
@@ -25,79 +51,42 @@ let parseVentLine (line: string) =
         line.Split "->"
         |> Array.map (fun s -> s.Trim())
         |> Array.map parsePoint
+        |> Array.sort
 
-    let isHorizontal p1 p2 = (p1.X = p2.X)
+    { Start = points.[0]; End = points.[1] }
 
-    let lhs = points.[0]
-    let rhs = points.[1]
 
-    if (isHorizontal lhs rhs) then
-        if lhs.Y >= rhs.Y then
-            Horizontal { Start = rhs; End = lhs }
+let ventLineToPointList (vent: Line) : list<Point> =
+    let rec addLineToVentList (vents: Line) l =
+        if (vents.Start = vents.End) then
+            vents.Start :: l
         else
-            Horizontal { Start = lhs; End = rhs }
-    else if lhs.X >= rhs.X then
-        Vertical { Start = rhs; End = lhs }
-    else
-        Vertical { Start = lhs; End = rhs }
+            let restOfLine =
+                { Start =
+                      { X =
+                            if (vents.Start.X = vents.End.X) then
+                                vents.Start.X
+                            else
+                                (vents.Start.X + 1)
+                        Y =
+                            if (vents.Start.Y = vents.End.Y) then
+                                vents.Start.Y
+                            else
+                                (vents.Start.Y + 1) }
+                  End = vents.End }
 
-let addVentToMap (vent: Direction) map =
-    let addVent (x: int) (y: int) (m: Map<int, Map<int, int>>) =
-        let mapWithX =
-            if not (Map.containsKey x m) then
-                Map.add x Map.empty m
-            else
-                m
+            addLineToVentList restOfLine (vents.Start :: l)
 
-        let xMap = mapWithX.[x]
-
-        let newXMap =
-            if Map.containsKey y xMap then
-                let newVal = (xMap.[y] + 1)
-                Map.add y newVal xMap
-            else
-                Map.add y 1 xMap
-
-        Map.add x newXMap m
-
-
-
-    let addVerticalVents v m =
-        let rec addVerticalInner m x currentY upperY =
-            if (currentY > upperY) then
-                m
-            else
-                addVerticalInner (addVent x currentY m) x (currentY + 1) upperY
-
-        addVerticalInner m v.Start.X v.Start.Y v.End.Y
-
-    let addHorizontalVents v m =
-        let rec addHorizontalInner m y currentX upperX =
-            if (currentX > upperX) then
-                m
-            else
-                addHorizontalInner (addVent currentX y m) y (currentX + 1) upperX
-
-        addHorizontalInner m v.Start.Y v.Start.X v.End.X
-
-    match vent with
-    | Vertical v -> addVerticalVents v map
-    | Horizontal h -> addHorizontalVents h map
-
-
-let buildMap (vents: list<Direction>) =
-    let rec builder map vents =
-        match vents with
-        | [] -> map
-        | vent :: tail -> builder (addVentToMap vent map) tail
-
-    builder Map.empty vents
+    List.empty |> addLineToVentList vent 
 
 let parseVents (input: string) =
     input
     |> stringToStringList
     |> List.map parseVentLine
-    |> buildMap
+    |> List.map ventLineToPointList
+    |> List.concat
+    |> List.sort
+
 
 let countWithScoreAbove score vents =
     vents
@@ -110,9 +99,43 @@ let countWithScoreAbove score vents =
             |> Seq.length)
     |> Seq.sum
 
+
 [<Fact>]
-let ``can add a row and count its items`` () =
-    "2,2 -> 2,1"
-    |> parseVents
-    |> countWithScoreAbove 0
-    |> should equal 2
+let ``points with lower x are less than`` () =
+    [{X=1;Y=0};{X=0;Y=0}]
+    |> List.sort
+    |> should equal [{X=0;Y=0};{X=1;Y=0}]
+
+
+[<Fact>]
+let ``parse a row into a sorted line`` () =
+    let ventLine = "2,2 -> 2,1" |> parseVentLine
+
+    ventLine
+    |> should
+        equal
+        { Start = { X = 2; Y = 1 }
+          End = { X = 2; Y = 2 } }
+
+
+[<Fact>]
+let ``parse a sorted line into a point list`` () =
+     { Start = { X = 2; Y = 1 }
+       End = { X = 2; Y = 2 } }
+     |> ventLineToPointList
+     |> List.sort
+     |> should equal [{X=2;Y=1};{X=2;Y=2}]
+    
+[<Fact>]
+let ``parse 2 rows into point lists`` () =
+    let ventLine =
+        """2,2 -> 2,1
+1,2->2,2
+"""
+        |> parseVents
+
+    ventLine
+    |> should
+        equal
+        { Start = { X = 2; Y = 1 }
+          End = { X = 2; Y = 2 } }
