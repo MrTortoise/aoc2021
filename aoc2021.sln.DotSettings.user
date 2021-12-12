@@ -94,5 +94,7 @@
     &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::Tests.point to cost&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::Tests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::TretcheryOfWhales.find cost position of test data&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::TretcheryOfWhales.100 distance should cost 5050&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::TretcheryOfWhales&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

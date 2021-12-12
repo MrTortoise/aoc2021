@@ -15,6 +15,24 @@ type Point =
 
 type CostByPosition = { Position: Position; Cost: Cost }
 
+let buildCosts range =
+    let length = range.Max - range.Min
+    let costs = Array.zeroCreate (length + 1)
+
+    for i in 1 .. length do
+        costs.[i] <- i
+
+    costs
+
+let buildIncreasingCosts range =
+    let length = range.Max - range.Min
+    let costs = Array.zeroCreate (length + 1)
+
+    for i in 1 .. length do
+        costs.[i] <- costs.[i - 1] + i
+
+    costs
+
 let parseToPoints (str: string) =
     str.Split(',')
     |> Array.groupBy id
@@ -24,10 +42,8 @@ let parseToPoints (str: string) =
               Quantity = b |> Array.length })
     |> Array.sortBy (fun i -> i.Position)
 
-
-
-let pointToCost positionToEvaluate (point: Point) =
-    let cost =
+let pointToCost (costLookup: int []) positionToEvaluate (point: Point) =
+    let distance =
         if positionToEvaluate > point.Position then
             (positionToEvaluate - point.Position)
         else if positionToEvaluate = point.Position then
@@ -36,10 +52,11 @@ let pointToCost positionToEvaluate (point: Point) =
             (point.Position - positionToEvaluate)
 
     { Position = point.Position
-      Cost = point.Quantity * cost }
+      Cost = point.Quantity * costLookup.[distance] }
 
-let costPointsAt position points =
-    points |> Array.map (pointToCost position)
+let costPointsAt (costLookup: int []) position points =
+    points
+    |> Array.map (pointToCost costLookup position)
 
 let toTotalCost (costs: CostByPosition []) = costs |> Array.sumBy (fun i -> i.Cost)
 
@@ -52,6 +69,7 @@ let buildRange (costByPosition: Point []) : Range =
 
 let getTotalCostByPosition (points: Point []) =
     let range = buildRange points
+    let costLookup = buildCosts range
 
     let rec getTotalCostInt maxPos points currentPosition accumulatedCostsByPosition =
         if (currentPosition > maxPos) then
@@ -59,7 +77,7 @@ let getTotalCostByPosition (points: Point []) =
         else
             let currentTotal =
                 points
-                |> costPointsAt currentPosition
+                |> costPointsAt costLookup currentPosition
                 |> toTotalCost
 
             getTotalCostInt
@@ -72,6 +90,31 @@ let getTotalCostByPosition (points: Point []) =
 
     getTotalCostInt range.Max points range.Min list.Empty
     |> List.sortBy (fun i -> i.Position)
+
+let getTotalCostByIncreasingPosition (points: Point []) =
+    let range = buildRange points
+    let costLookup = buildIncreasingCosts range
+
+    let rec getTotalCostInt maxPos points currentPosition accumulatedCostsByPosition =
+        if (currentPosition > maxPos) then
+            accumulatedCostsByPosition
+        else
+            let currentTotal =
+                points
+                |> costPointsAt costLookup currentPosition
+                |> toTotalCost
+
+            getTotalCostInt
+                maxPos
+                points
+                (currentPosition + 1)
+                ({ Position = currentPosition
+                   Cost = currentTotal }
+                 :: accumulatedCostsByPosition)
+
+    getTotalCostInt range.Max points range.Min list.Empty
+    |> List.sortBy (fun i -> i.Position)
+
 
 
 [<Fact>]
@@ -91,7 +134,7 @@ let ``Find the shortest sum of differences value`` () =
 [<Fact>]
 let ``point to cost`` () =
     { Position = 3; Quantity = 5 }
-    |> pointToCost 5
+    |> pointToCost (buildCosts { Min = 0; Max = 10 }) 5
     |> should equal { Position = 3; Cost = 10 }
 
 [<Fact>]
@@ -115,7 +158,7 @@ let ``calculate cost for position 0 for all positions`` () =
        { Position = 7; Quantity = 1 }
        { Position = 14; Quantity = 1 }
        { Position = 16; Quantity = 1 } |]
-    |> costPointsAt 4
+    |> costPointsAt (buildCosts { Min = 0; Max = 16 }) 4
     |> should
         equal
         [| { Position = 0; Cost = 4 }
@@ -189,3 +232,53 @@ let ``find cost position of test data`` () =
     |> getTotalCostByPosition
     |> List.minBy (fun i -> i.Cost)
     |> should equal { Position = 361; Cost = 354129 }
+
+
+// Part 2
+[<Fact>]
+let ``example data with increasing cost over distance`` () =
+    "16,1,2,0,4,2,7,1,2,14"
+    |> parseToPoints
+    |> getTotalCostByIncreasingPosition
+    |> should
+        equal
+        [ { Position = 0; Cost = 290 }
+          { Position = 1; Cost = 242 }
+          { Position = 2; Cost = 206 }
+          { Position = 3; Cost = 183 }
+          { Position = 4; Cost = 170 }
+          { Position = 5; Cost = 168 }
+          { Position = 6; Cost = 176 }
+          { Position = 7; Cost = 194 }
+          { Position = 8; Cost = 223 }
+          { Position = 9; Cost = 262 }
+          { Position = 10; Cost = 311 }
+          { Position = 11; Cost = 370 }
+          { Position = 12; Cost = 439 }
+          { Position = 13; Cost = 518 }
+          { Position = 14; Cost = 607 }
+          { Position = 15; Cost = 707 }
+          { Position = 16; Cost = 817 } ]
+
+[<Fact>]
+let ``example data with increasing cost over distance total`` () =
+    "16,1,2,0,4,2,7,1,2,14"
+    |> parseToPoints
+    |> getTotalCostByIncreasingPosition
+    |> List.minBy (fun i -> i.Cost)
+    |> should equal { Position = 5; Cost = 168 }
+
+[<Fact>]
+let ``100 distance should cost 5050`` () =
+    let costLookup =
+        { Min = 0; Max = 100 } |> buildIncreasingCosts
+
+    costLookup.[100] |> should equal 5050
+
+[<Fact>]
+let ``find cost position of test data increasing`` () =
+    File.ReadAllText("Day7Data.txt")
+    |> parseToPoints
+    |> getTotalCostByIncreasingPosition
+    |> List.minBy (fun i -> i.Cost)
+    |> should equal { Position = 494; Cost = 98905973 }
