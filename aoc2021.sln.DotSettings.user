@@ -90,5 +90,9 @@
     &lt;TestId&gt;xUnit::5E45CBC8-28B7-4254-A870-B9B6F7C1594C::net6.0::Tests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::5E45CBC8-28B7-4254-A870-B9B6F7C1594C::net6.0::LanternFish.Example data total after 18 iteration&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::5E45CBC8-28B7-4254-A870-B9B6F7C1594C::net6.0::LanternFish&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::Tests.Find the shortest sum of differences value&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::Tests.point to cost&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::Tests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38738B3E-2B32-49B2-84B7-70B8E5DC9746::net6.0::TretcheryOfWhales.find cost position of test data&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
