@@ -67,55 +67,37 @@ let buildRange (costByPosition: Point []) : Range =
               .Position }
 
 
+let rec getTotalCostInt costLookup maxPos points currentPosition accumulatedCostsByPosition =
+    if (currentPosition > maxPos) then
+        accumulatedCostsByPosition
+    else
+        let currentTotal =
+            points
+            |> costPointsAt costLookup currentPosition
+            |> toTotalCost
+
+        getTotalCostInt
+            costLookup
+            maxPos
+            points
+            (currentPosition + 1)
+            ({ Position = currentPosition
+               Cost = currentTotal }
+             :: accumulatedCostsByPosition)
+                
 let getTotalCostByPosition (points: Point []) =
     let range = buildRange points
     let costLookup = buildCosts range
 
-    let rec getTotalCostInt maxPos points currentPosition accumulatedCostsByPosition =
-        if (currentPosition > maxPos) then
-            accumulatedCostsByPosition
-        else
-            let currentTotal =
-                points
-                |> costPointsAt costLookup currentPosition
-                |> toTotalCost
-
-            getTotalCostInt
-                maxPos
-                points
-                (currentPosition + 1)
-                ({ Position = currentPosition
-                   Cost = currentTotal }
-                 :: accumulatedCostsByPosition)
-
-    getTotalCostInt range.Max points range.Min list.Empty
+    getTotalCostInt costLookup range.Max points range.Min list.Empty
     |> List.sortBy (fun i -> i.Position)
 
 let getTotalCostByIncreasingPosition (points: Point []) =
     let range = buildRange points
     let costLookup = buildIncreasingCosts range
 
-    let rec getTotalCostInt maxPos points currentPosition accumulatedCostsByPosition =
-        if (currentPosition > maxPos) then
-            accumulatedCostsByPosition
-        else
-            let currentTotal =
-                points
-                |> costPointsAt costLookup currentPosition
-                |> toTotalCost
-
-            getTotalCostInt
-                maxPos
-                points
-                (currentPosition + 1)
-                ({ Position = currentPosition
-                   Cost = currentTotal }
-                 :: accumulatedCostsByPosition)
-
-    getTotalCostInt range.Max points range.Min list.Empty
+    getTotalCostInt costLookup range.Max points range.Min list.Empty
     |> List.sortBy (fun i -> i.Position)
-
-
 
 [<Fact>]
 let ``Find the shortest sum of differences value`` () =
