@@ -85,16 +85,9 @@ let rec getTotalCostInt costLookup maxPos points currentPosition accumulatedCost
                Cost = currentTotal }
              :: accumulatedCostsByPosition)
                 
-let getTotalCostByPosition (points: Point []) =
+let getTotalCostByPosition (costBuilder: Range->int[]) (points: Point []) =
     let range = buildRange points
-    let costLookup = buildCosts range
-
-    getTotalCostInt costLookup range.Max points range.Min list.Empty
-    |> List.sortBy (fun i -> i.Position)
-
-let getTotalCostByIncreasingPosition (points: Point []) =
-    let range = buildRange points
-    let costLookup = buildIncreasingCosts range
+    let costLookup = costBuilder range
 
     getTotalCostInt costLookup range.Max points range.Min list.Empty
     |> List.sortBy (fun i -> i.Position)
@@ -172,7 +165,7 @@ let ``Total costs by position`` () =
        { Position = 7; Quantity = 1 }
        { Position = 14; Quantity = 1 }
        { Position = 16; Quantity = 1 } |]
-    |> getTotalCostByPosition
+    |> getTotalCostByPosition buildCosts
     |> List.sortBy (fun i -> i.Position)
     |> should
         equal
@@ -203,7 +196,7 @@ let ``Get the lowest cost by position`` () =
        { Position = 7; Quantity = 1 }
        { Position = 14; Quantity = 1 }
        { Position = 16; Quantity = 1 } |]
-    |> getTotalCostByPosition
+    |> getTotalCostByPosition buildCosts
     |> List.minBy (fun i -> i.Cost)
     |> should equal { Position = 2; Cost = 37 }
 
@@ -211,7 +204,7 @@ let ``Get the lowest cost by position`` () =
 let ``find cost position of test data`` () =
     File.ReadAllText("Day7Data.txt")
     |> parseToPoints
-    |> getTotalCostByPosition
+    |> getTotalCostByPosition buildCosts
     |> List.minBy (fun i -> i.Cost)
     |> should equal { Position = 361; Cost = 354129 }
 
@@ -221,7 +214,7 @@ let ``find cost position of test data`` () =
 let ``example data with increasing cost over distance`` () =
     "16,1,2,0,4,2,7,1,2,14"
     |> parseToPoints
-    |> getTotalCostByIncreasingPosition
+    |> getTotalCostByPosition buildIncreasingCosts
     |> should
         equal
         [ { Position = 0; Cost = 290 }
@@ -246,7 +239,7 @@ let ``example data with increasing cost over distance`` () =
 let ``example data with increasing cost over distance total`` () =
     "16,1,2,0,4,2,7,1,2,14"
     |> parseToPoints
-    |> getTotalCostByIncreasingPosition
+    |> getTotalCostByPosition buildIncreasingCosts
     |> List.minBy (fun i -> i.Cost)
     |> should equal { Position = 5; Cost = 168 }
 
@@ -261,6 +254,6 @@ let ``100 distance should cost 5050`` () =
 let ``find cost position of test data increasing`` () =
     File.ReadAllText("Day7Data.txt")
     |> parseToPoints
-    |> getTotalCostByIncreasingPosition
+    |> getTotalCostByPosition buildIncreasingCosts
     |> List.minBy (fun i -> i.Cost)
     |> should equal { Position = 494; Cost = 98905973 }
